@@ -18,10 +18,10 @@
 # Quy trình hoạt động chi tiết
 * Đăng ký và đăng nhập
     *	Người dùng đăng ký tài khoản:
-      *	Người dùng tạo tài khoản với username và mật khẩu, đảm bảo username không trùng lặp.
-      *	Thông tin tài khoản được lưu trữ trong bảng Users.
+        *	Người dùng tạo tài khoản với username và mật khẩu, đảm bảo username không trùng lặp.
+        *	Thông tin tài khoản được lưu trữ trong bảng Users.
     * Người dùng đăng nhập:
-      *	Người dùng đăng nhập bằng username và mật khẩu, và hệ thống xác thực thông tin để cho phép truy cập.
+        *	Người dùng đăng nhập bằng username và mật khẩu, và hệ thống xác thực thông tin để cho phép truy cập.
 * Quản lý nhóm
     *	Tạo nhóm mới:
         * Người dùng có thể tạo một nhóm mới và trở thành Admin của nhóm đó.
