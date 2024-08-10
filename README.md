@@ -1,7 +1,7 @@
 Mô tả hệ thống quản lý nhóm và người dùng
-1. Tổng quan
+# Tổng quan
   Hệ thống quản lý nhóm và người dùng này cho phép người dùng tạo và quản lý các nhóm với nhiều vai trò khác nhau, đăng bài blog cá nhân hoặc trong nhóm, và kiểm soát nội dung bằng cách yêu cầu phê duyệt blog trước khi xuất bản. Người dùng có thể gửi yêu cầu tham gia nhóm, và sau khi được phê duyệt, họ sẽ được gán vai trò trong nhóm. Hệ thống hỗ trợ việc đánh dấu blog là "pending" để các thành viên có quyền hạn trong nhóm duyệt trước khi chính thức xuất bản.
-2. Thành phần chính của hệ thống
+# Thành phần chính của hệ thống
   1.	Người dùng (Users):
     o	Người dùng có thể đăng ký tài khoản với username và mật khẩu.
     o	Người dùng có thể quản lý thông tin cá nhân và đăng các bài blog cá nhân (có thể chọn chế độ công khai hoặc riêng tư).
