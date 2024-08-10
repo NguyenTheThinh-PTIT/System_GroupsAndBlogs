@@ -16,43 +16,45 @@ Mô tả hệ thống quản lý nhóm và người dùng
     *	Khi một bài blog được đăng trong nhóm, nó có thể được đánh dấu là "pending" và chờ duyệt.
     *	Các thành viên có quyền hạn (ví dụ: Admin, Moderator) có thể duyệt, từ chối, hoặc yêu cầu chỉnh sửa blog trước khi xuất bản.
 # Quy trình hoạt động chi tiết
-  ## Đăng ký và đăng nhập
-    1.	Người dùng đăng ký tài khoản:
-      ###	Người dùng tạo tài khoản với username và mật khẩu, đảm bảo username không trùng lặp.
-      ###	Thông tin tài khoản được lưu trữ trong bảng Users.
-    2.	Người dùng đăng nhập:
-      ###	Người dùng đăng nhập bằng username và mật khẩu, và hệ thống xác thực thông tin để cho phép truy cập.
-  ## Quản lý nhóm
-    1.	Tạo nhóm mới:
-      ###	Người dùng có thể tạo một nhóm mới và trở thành Admin của nhóm đó.
-      ###	Thông tin về nhóm được lưu trữ trong bảng Groups.
-    2.	Mời người dùng tham gia nhóm:
-      ###	Admin có thể mời người dùng khác tham gia nhóm.
-      ###	Người dùng được mời có thể chấp nhận hoặc từ chối lời mời.
-    3.	Yêu cầu tham gia nhóm:
-      ###	Người dùng có thể gửi yêu cầu tham gia vào một nhóm cụ thể.
-      ###	Yêu cầu này được lưu trữ và trạng thái chờ phê duyệt trong bảng Group_Members.
-    4.	Phê duyệt và gán vai trò:
-      ###	Admin hoặc thành viên có quyền hạn có thể phê duyệt yêu cầu tham gia nhóm và gán vai trò cho thành viên mới.
-  ## Quản lý blog
-    1.	Đăng bài blog cá nhân:
-      ###	Người dùng có thể đăng bài blog cá nhân và chọn chế độ công khai hoặc riêng tư.
-      ###	Bài blog cá nhân được lưu trong bảng Blogs với group_id là NULL.
-    2.	Đăng bài blog trong nhóm:
-      ###	Thành viên trong nhóm có thể đăng bài blog mới.
-      ###	Bài blog được lưu với trạng thái pending và chờ phê duyệt.
-    3.	Duyệt bài blog:
-      ###	Thành viên có quyền hạn (Admin, Moderator) được thông báo về các bài blog đang chờ duyệt.
-      ###	Họ có thể duyệt để xuất bản, từ chối, hoặc yêu cầu chỉnh sửa bài viết.
-    4.	Xuất bản bài blog:
-      ###	Khi được duyệt, bài blog chuyển sang trạng thái published và hiển thị cho tất cả thành viên trong nhóm.
-  ## Quản lý thành viên trong nhóm
-    1.	Xem và quản lý thành viên:
-      o	Admin hoặc thành viên có quyền quản lý có thể xem danh sách thành viên trong nhóm, gán hoặc thay đổi vai trò của họ.
-    2.	Xóa thành viên khỏi nhóm:
-      o	Admin hoặc thành viên có quyền quản lý có thể xóa thành viên khỏi nhóm nếu cần.
-  ## Quản lý yêu cầu tham gia
-    1.	Duyệt yêu cầu tham gia:
-      o	Admin hoặc thành viên có quyền hạn duyệt yêu cầu tham gia của người dùng và gán vai trò phù hợp sau khi phê duyệt.
-
+* Đăng ký và đăng nhập
+    *	Người dùng đăng ký tài khoản:
+      *	Người dùng tạo tài khoản với username và mật khẩu, đảm bảo username không trùng lặp.
+      *	Thông tin tài khoản được lưu trữ trong bảng Users.
+    * Người dùng đăng nhập:
+      *	Người dùng đăng nhập bằng username và mật khẩu, và hệ thống xác thực thông tin để cho phép truy cập.
+* Quản lý nhóm
+    *	Tạo nhóm mới:
+        * Người dùng có thể tạo một nhóm mới và trở thành Admin của nhóm đó.
+        *	Thông tin về nhóm được lưu trữ trong bảng Groups.
+    *	Mời người dùng tham gia nhóm:
+        * 	Admin có thể mời người dùng khác tham gia nhóm.
+        *	Người dùng được mời có thể chấp nhận hoặc từ chối lời mời.
+    * Yêu cầu tham gia nhóm:
+        *	Người dùng có thể gửi yêu cầu tham gia vào một nhóm cụ thể.
+        *	Yêu cầu này được lưu trữ và trạng thái chờ phê duyệt trong bảng Group_Members.
+    *	Phê duyệt và gán vai trò:
+        *	Admin hoặc thành viên có quyền hạn có thể phê duyệt yêu cầu tham gia nhóm và gán vai trò cho thành viên mới.
+* Quản lý blog
+    *	Đăng bài blog cá nhân:
+        *	Người dùng có thể đăng bài blog cá nhân và chọn chế độ công khai hoặc riêng tư.
+        *	Bài blog cá nhân được lưu trong bảng Blogs với group_id là NULL.
+    *	Đăng bài blog trong nhóm:
+        *	Thành viên trong nhóm có thể đăng bài blog mới.
+        *	Bài blog được lưu với trạng thái pending và chờ phê duyệt.
+    *	Duyệt bài blog:
+        *	Thành viên có quyền hạn (Admin, Moderator) được thông báo về các bài blog đang chờ duyệt.
+        *	Họ có thể duyệt để xuất bản, từ chối, hoặc yêu cầu chỉnh sửa bài viết.
+    *	Xuất bản bài blog:
+        *	Khi được duyệt, bài blog chuyển sang trạng thái published và hiển thị cho tất cả thành viên trong nhóm.
+* Quản lý thành viên trong nhóm
+    *	Xem và quản lý thành viên:
+        *	Admin hoặc thành viên có quyền quản lý có thể xem danh sách thành viên trong nhóm, gán hoặc thay đổi vai trò của họ.
+    *	Xóa thành viên khỏi nhóm:
+        *	Admin hoặc thành viên có quyền quản lý có thể xóa thành viên khỏi nhóm nếu cần.
+* Quản lý yêu cầu tham gia
+    *	Duyệt yêu cầu tham gia:
+        *	Admin hoặc thành viên có quyền hạn duyệt yêu cầu tham gia của người dùng và gán vai trò phù hợp sau khi phê duyệt.
+# Quyền hạn và bảo mật
+* Phân quyền dựa trên vai trò: Vai trò trong nhóm xác định quyền hạn của thành viên, bao gồm quyền duyệt bài blog.
+* Bảo mật thông tin: Hệ thống bảo mật thông tin cá nhân của người dùng và nội dung trong nhóm. Các bài blog chỉ được xuất bản khi đã được duyệt.
 
