@@ -3,8 +3,8 @@
   * Hệ thống quản lý nhóm và người dùng này cho phép người dùng tạo và quản lý các nhóm với nhiều vai trò khác nhau, đăng bài blog cá nhân hoặc trong nhóm, và kiểm soát nội dung bằng cách yêu cầu phê duyệt blog trước khi xuất bản. Người dùng có thể gửi yêu cầu tham gia nhóm, và sau khi được phê duyệt, họ sẽ được gán vai trò trong nhóm. Hệ thống hỗ trợ việc đánh dấu blog là "pending" để các thành viên có quyền hạn trong nhóm duyệt trước khi chính thức xuất bản.
 # Thành phần chính của hệ thống
 * Người dùng (Users):
-    	* Người dùng có thể đăng ký tài khoản với username và mật khẩu.
-    	* Người dùng có thể quản lý thông tin cá nhân và đăng các bài blog cá nhân (có thể chọn chế độ công khai hoặc riêng tư).
+    * Người dùng có thể đăng ký tài khoản với username và mật khẩu.
+    * Người dùng có thể quản lý thông tin cá nhân và đăng các bài blog cá nhân (có thể chọn chế độ công khai hoặc riêng tư).
 * Nhóm (Groups):
     *	Người dùng có thể tạo nhóm và quản lý nhóm, bao gồm mời người khác, duyệt yêu cầu tham gia, và gán vai trò.
     *	Mỗi nhóm có thể có nhiều vai trò khác nhau, chẳng hạn như Admin, Moderator, Member, v.v.
