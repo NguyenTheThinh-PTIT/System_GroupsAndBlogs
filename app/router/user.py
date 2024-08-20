@@ -1,6 +1,6 @@
 from fastapi import status, HTTPException, Depends, APIRouter, FastAPI, Response
 from sqlalchemy.orm import Session
-from .. import schemas, utils, models
+from .. import schemas, utils, models, oauth2
 from ..database import get_db
 
 router = APIRouter(
@@ -29,4 +29,25 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.refresh(new_user)
 
     return new_user  
+
+@router.put("/{user_id}", response_model=schemas.UserOut)
+async def update_user(user_id :int, user_update: schemas.UserUpdate, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
+    user = db.query(models.User).filter(models.User.user_id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    if user_id != current_user.user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not allowed to update another user's information")
+    
+    user.username = user_update.username
+    user.password = utils.hash(user_update.password)
+    user.email = user_update.email
+    user.full_name = user_update.full_name
+
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+
 
