@@ -31,3 +31,12 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str] = None
+
+class GroupResponse(BaseModel):
+    group_name: str
+    created_at: datetime
+    class Config:
+        from_attributes = True
+
+class GroupCreate(BaseModel):
+    group_name: str

@@ -30,15 +30,10 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
     return new_user  
 
-@router.put("/{user_id}", response_model=schemas.UserOut)
-async def update_user(user_id :int, user_update: schemas.UserUpdate, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
-    user = db.query(models.User).filter(models.User.user_id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+@router.put("/update", response_model=schemas.UserOut)
+async def update_user(user_update: schemas.UserUpdate, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
+    user = db.query(models.User).filter(models.User.user_id == current_user.user_id).first()
 
-    if user_id != current_user.user_id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not allowed to update another user's information")
-    
     user.username = user_update.username
     user.password = utils.hash(user_update.password)
     user.email = user_update.email
