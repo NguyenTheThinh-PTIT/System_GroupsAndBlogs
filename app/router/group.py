@@ -59,3 +59,21 @@ def request_to_join_group(group_id: int, db: Session = Depends(get_db), current_
     
     return {"message": "Request to join group is pending approval"}
 
+@router.post("/{group_id}/approve/{user_id}")
+def approve_member(group_id: int, user_id: int, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
+    # Kiểm tra nếu current_user là admin của nhóm
+    member = db.query(models.Group_Member).filter(models.Group_Member.group_id == group_id, models.Group_Member.role_id == 1, models.Group_Member.status == "approved").first()
+    if not member:
+        raise HTTPException(status_code=403, detail="You do not have permission to approve members")
+    
+    # Duyệt yêu cầu
+    pending_member = db.query(models.Group_Member).filter(models.Group_Member.group_id == group_id, models.Group_Member.user_id == user_id, models.Group_Member.status == "pending").first()
+    if not pending_member:
+        raise HTTPException(status_code=404, detail="Pending request not found")
+    
+    pending_member.status = "approved"
+    db.commit()
+    
+    return {"message": "Member approved"}
+
+
