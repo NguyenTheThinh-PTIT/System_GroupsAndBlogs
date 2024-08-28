@@ -11,3 +11,6 @@ app.include_router(user.router)
 app.include_router(auth.router)
 app.include_router(group.router)
 
+# Khi nào truyền path param và query param
+# Check tồn tại của user_id và group_id khi nhận từ 2 cái trên
+

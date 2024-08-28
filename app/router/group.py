@@ -43,7 +43,7 @@ def request_to_join_group(group_id: int, db: Session = Depends(get_db), current_
                                                   models.Group_Member.status == "pending", 
                                                   models.Group_Member.user_id==current_user.user_id ).first()
     if member:
-        raise HTTPException(status_code=400, detail="Your request is pending approval")
+        raise HTTPException(status_code=400, detail="Your request is already pending process")
     
     member = db.query(models.Group_Member).filter(models.Group_Member.group_id == int(group_id), 
                                                   models.Group_Member.status == "approved", 
@@ -62,7 +62,10 @@ def request_to_join_group(group_id: int, db: Session = Depends(get_db), current_
 @router.post("/{group_id}/approve/{user_id}")
 def approve_member(group_id: int, user_id: int, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
     # Kiểm tra nếu current_user là admin của nhóm
-    member = db.query(models.Group_Member).filter(models.Group_Member.group_id == group_id, models.Group_Member.role_id == 1, models.Group_Member.status == "approved").first()
+    member = db.query(models.Group_Member).filter(models.Group_Member.group_id == group_id, 
+                                                  models.Group_Member.role_id == 1, 
+                                                  models.Group_Member.user_id == current_user.user_id,
+                                                  models.Group_Member.status == "approved").first()
     if not member:
         raise HTTPException(status_code=403, detail="You do not have permission to approve members")
     
@@ -76,4 +79,63 @@ def approve_member(group_id: int, user_id: int, db: Session = Depends(get_db), c
     
     return {"message": "Member approved"}
 
+@router.post("/{group_id}/invite/{user_id}", response_model=schemas.GroupMemberResponse)
+def invite_user_to_group(group_id: int, user_id: int, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
+    # Kiểm tra nếu current_user là admin của nhóm
+    admin = db.query(models.Group_Member).filter(models.Group_Member.group_id == group_id, 
+                                                  models.Group_Member.role_id == 1, 
+                                                  models.Group_Member.user_id == current_user.user_id,
+                                                  models.Group_Member.status == "approved").first()
+    if not admin:
+        raise HTTPException(status_code=403, detail="You do not have permission to approve members")
+    
+    # Kiểm tra nếu người dùng đã là thành viên của nhóm
+    invited_member = db.query(models.Group_Member).filter(models.Group_Member.group_id == group_id, models.Group_Member.user_id == user_id, models.Group_Member.status == "approved").first()
+    if invited_member:
+        raise HTTPException(status_code=400, detail="User is already a member of this group")
+    
+    # Kiểm tra nếu người dùng đang đợi duyệt làm thành viên của nhóm
+    invited_member = db.query(models.Group_Member).filter(models.Group_Member.group_id == group_id, models.Group_Member.user_id == user_id, models.Group_Member.status == "pending").first()
+    if invited_member:
+        raise HTTPException(status_code=400, detail="User is already in a pending process")
+    
+    # Mời người dùng vào nhóm (trạng thái "approved")
+    new_member = models.Group_Member(group_id=group_id, user_id=user_id, status="approved")
+    db.add(new_member)
+    db.commit()
+    db.refresh(new_member)
+    
+    return new_member
+
+@router.put("/{group_id}/members/{user_id}/role", response_model=schemas.GroupMemberResponse)
+def assign_role_to_member(group_id: int, user_id: int, role_id: int, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
+    # Kiểm tra nếu current_user là admin của nhóm
+    admin = db.query(models.Group_Member).filter(models.Group_Member.group_id == group_id, 
+                                                  models.Group_Member.role_id == 1, 
+                                                  models.Group_Member.user_id == current_user.user_id,
+                                                  models.Group_Member.status == "approved").first()
+    if not admin:
+        raise HTTPException(status_code=403, detail="You do not have permission to approve members")
+    
+    # Kiểm tra nếu người dùng là thành viên của nhóm
+    group_member = db.query(models.Group_Member).filter(models.Group_Member.group_id==group_id, models.Group_Member.user_id==user_id).first()
+    if not group_member:
+        raise HTTPException(status_code=404, detail="User is not a member of this group")
+    
+    group_member = db.query(models.Group_Member).filter(models.Group_Member.group_id==group_id, 
+                                                        models.Group_Member.user_id==user_id, 
+                                                        models.Group_Member.status == "pending").first()
+    if group_member:
+        raise HTTPException(status_code=404, detail="User is on pending process")
+
+
+    group_member = db.query(models.Group_Member).filter(models.Group_Member.group_id==group_id, 
+                                                        models.Group_Member.user_id==user_id, 
+                                                        models.Group_Member.status == "approved").first()
+    # Cập nhật role cho thành viên
+    group_member.role_id = role_id
+    db.commit()
+    db.refresh(group_member)
+    
+    return group_member
 

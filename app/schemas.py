@@ -40,3 +40,16 @@ class GroupResponse(BaseModel):
 
 class GroupCreate(BaseModel):
     group_name: str
+
+
+class GroupMemberResponse(BaseModel):
+    group_member_id: int
+    group_id: int
+    user_id : int
+    role_id: Optional[int] = None
+    status: str
+    created_at: datetime 
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
