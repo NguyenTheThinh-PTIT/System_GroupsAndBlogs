@@ -33,6 +33,7 @@ class TokenData(BaseModel):
     id: Optional[str] = None
 
 class GroupResponse(BaseModel):
+    group_id: int
     group_name: str
     created_at: datetime
     class Config:
@@ -53,3 +54,55 @@ class GroupMemberResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class BlogResponse(BaseModel):
+    blog_id: int 
+    user_id: int 
+    group_id: int
+    title: str
+    content: str
+    is_public: bool
+    status: str
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class BlogCreate(BaseModel):
+    title: str
+    content: str
+    is_public: bool
+
+class ReactionResponse(BaseModel):
+    reaction_id: int
+    user_id: int
+    blog_id: int
+    reaction_type: str
+    created_at: datetime
+    updated_at: datetime
+    class Config:
+        from_attributes = True
+
+class ReactionCreate(BaseModel):
+    reaction_type: str
+
+    class Config:
+        from_attributes = True
+
+class CommentResponse(BaseModel):
+    comment_id: int
+    blog_id: int
+    user_id: int
+    parent_comment_id: Optional[int] = None
+    content: str
+
+    class Config:
+        from_attributes = True
+
+class CommentOfPostCreate(BaseModel):
+    content: str
+
+class CommentOfMemberCreate(BaseModel):
+    content: str
+    parent_comment_id: int

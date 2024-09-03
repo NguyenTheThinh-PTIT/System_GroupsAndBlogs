@@ -16,7 +16,14 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
     if user_found:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,
-                            detail=f"username: {user.username} already existd")
+                            detail=f"username: {user.username} already exits")
+    
+    user_query = db.query(models.User).filter(models.User.email == user.email)
+    user_found = user_query.first()
+
+    if user_found:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                            detail=f"email: {user.email} already exits")
     
     utils.validate_password_strength(user.password)
 
@@ -32,6 +39,16 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 @router.put("/update", response_model=schemas.UserOut)
 async def update_user(user_update: schemas.UserUpdate, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
+    if user_update.username != current_user.username:
+        user_query = db.query(models.User).filter(models.User.username == user_update.username)
+        if user_query.first():
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"username: {user_update.username} already exits")
+        
+    if user_update.email != current_user.email:
+        user_query = db.query(models.User).filter(models.User.email == user_update.email)
+        if user_query.first():
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"email: {user_update.email} already exits")
+        
     user = db.query(models.User).filter(models.User.user_id == current_user.user_id).first()
 
     user.username = user_update.username
