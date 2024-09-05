@@ -14,6 +14,7 @@ class User(Base):
     full_name = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+    # group_members = relationship("GroupMember", back_populates="user")
 
 class Group(Base):
     __tablename__ = "groups"
@@ -22,6 +23,7 @@ class Group(Base):
     group_name = Column(String, nullable=False, unique=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+    # members = relationship("GroupMember", back_populates="group")
 
 class Role(Base):
     __tablename__ = "roles"
@@ -30,6 +32,7 @@ class Role(Base):
     role_name = Column(String, nullable=False, unique=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+    # group_members = relationship("GroupMember", back_populates="role")
 
 class Group_Member(Base):
     __tablename__ = "group_members"
@@ -41,6 +44,11 @@ class Group_Member(Base):
     status = Column(String, default='pending')
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+    group = relationship("Group")
+    user = relationship("User")
+    role = relationship("Role")
+
+    
 
 class Blog(Base):
     __tablename__ = "blogs"
@@ -54,6 +62,8 @@ class Blog(Base):
     status = Column(String, default='pending')
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+    owner = relationship("User")
+    group = relationship("Group")
 
 class Reaction(Base): 
     __tablename__ = 'reactions'
@@ -64,6 +74,8 @@ class Reaction(Base):
     reaction_type = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+    # owner = relationship("User")
+    # blog = relationship("Blog")
 
 class Comment(Base):
     __tablename__ = 'comments'
@@ -73,3 +85,6 @@ class Comment(Base):
     user_id = Column(Integer, ForeignKey('users.user_id', ondelete="CASCADE"), nullable=False)
     parent_comment_id = Column(Integer, ForeignKey('comments.comment_id'), nullable=True)
     content = Column(String, nullable=False)
+    # blog = relationship("Blog")
+    # user = relationship("User")
+    # parent_comment = relationship("Comment")

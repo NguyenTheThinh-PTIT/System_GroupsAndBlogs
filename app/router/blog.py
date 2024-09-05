@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from .. import schemas, utils, models, oauth2
@@ -8,6 +9,46 @@ router = APIRouter(
     # prefix='/groups',
     tags=['blogs']
 )
+
+@router.get("/blogs", response_model=List[schemas.BlogResponse])
+async def get_blogs(group_id: int, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
+    # Kiểm tra group_id có tồn tại không
+    group_query = db.query(models.Group).filter(models.Group.group_id == group_id)
+    if not group_query.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Group {group_id} doesn't exits")
+    
+    # Kiêm tra xem current_user có thuộc group_id không
+    member_query = db.query(models.Group_Member).filter(models.Group_Member.group_id == group_id,
+                                                  models.Group_Member.user_id == current_user.user_id,
+                                                  models.Group_Member.status == "approved")
+    if not member_query.first():
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"You are not in group {group_id}")
+    
+    list_blogs = db.query(models.Blog).all()
+    return list_blogs
+
+@router.get("/blogs/{blog_id}/", response_model=schemas.BlogResponse)
+async def get_blog(group_id: int, blog_id: int, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
+    # Kiểm tra group_id có tồn tại không
+    group_query = db.query(models.Group).filter(models.Group.group_id == group_id)
+    if not group_query.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Group {group_id} doesn't exits")
+    
+    # Kiêm tra xem current_user có thuộc group_id không
+    member_query = db.query(models.Group_Member).filter(models.Group_Member.group_id == group_id,
+                                                  models.Group_Member.user_id == current_user.user_id,
+                                                  models.Group_Member.status == "approved")
+    if not member_query.first():
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"You are not in group {group_id}")
+    
+    # Kiểm tra xem blog_id có trong group_id không
+    blog_query = db.query(models.Blog).filter(models.Blog.group_id == group_id,
+                                              models.Blog.blog_id == blog_id)
+    blog = blog_query.first()
+    if not blog:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Blog {blog_id} doesn't belongs to group {group_id}")
+
+    return blog
 
 @router.post("/blogs/{group_id}/", response_model=schemas.BlogResponse)
 def create_group_blog(group_id: int, blog: schemas.BlogCreate, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
@@ -155,3 +196,5 @@ def comment_on_childComment(blog_id: int,group_id: int,comment: schemas.CommentO
     db.refresh(new_comment)
     
     return new_comment
+
+# @router.put

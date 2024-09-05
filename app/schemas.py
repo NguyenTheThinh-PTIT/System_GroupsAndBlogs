@@ -43,17 +43,17 @@ class GroupCreate(BaseModel):
     group_name: str
 
 
-class GroupMemberResponse(BaseModel):
-    group_member_id: int
-    group_id: int
-    user_id : int
-    role_id: Optional[int] = None
-    status: str
-    created_at: datetime 
-    updated_at: datetime
+# class GroupMemberResponse(BaseModel):
+#     group_member_id: int
+#     group_id: int
+#     user_id : int
+#     role_id: Optional[int] = None
+#     status: str
+#     created_at: datetime 
+#     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+#     class Config:
+#         from_attributes = True
 
 class BlogResponse(BaseModel):
     blog_id: int 
@@ -65,7 +65,8 @@ class BlogResponse(BaseModel):
     status: str
     created_at: datetime
     updated_at: datetime
-
+    owner: UserOut
+    group: GroupResponse
     class Config:
         from_attributes = True
 
@@ -106,3 +107,16 @@ class CommentOfPostCreate(BaseModel):
 class CommentOfMemberCreate(BaseModel):
     content: str
     parent_comment_id: int
+
+class RoleResponse(BaseModel):
+    role_id: Optional[int] = None
+    role_name: Optional[str] = None
+
+class GroupMemberResponse(BaseModel):
+    group_id: int
+    user_id: int
+    role_id: Optional[int] = None
+    status: str
+    user: UserOut
+    group: GroupResponse
+    role: Optional[RoleResponse] = None

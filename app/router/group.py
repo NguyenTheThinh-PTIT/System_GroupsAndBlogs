@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from .. import schemas, utils, models, oauth2
@@ -8,7 +9,33 @@ router = APIRouter(
     tags=['groups']
 )
 
-# @router.post("/groups/", response_model=GroupResponse)
+@router.get("/", response_model=List[schemas.GroupResponse])
+def get_groups(db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
+    # Kiểm tra current_user có phải admin của hệ thống không
+    admin_query = db.query(models.Group_Member).filter(models.Group_Member.user_id == current_user.user_id,
+                                                       models.Group_Member.role_id == 1)
+    if not admin_query.first():
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"You do not have permission to do this request")
+    list_groups = db.query(models.Group).all()
+    return list_groups
+
+@router.get("/{group_id}", response_model=schemas.GroupResponse)
+def get_groups(group_id: int, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
+    # Kiểm tra sự tồn tại của group_id
+    group_query = db.query(models.Group).filter(models.Group.group_id == group_id)
+    if not group_query.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Doesn't exits group {group_id}")
+
+    # Kiểm tra current_user có phải thành viên của group_id không
+    member_query = db.query(models.Group_Member).filter(models.Group_Member.user_id == current_user.user_id,
+                                                        models.Group_Member.group_id == group_id,
+                                                        models.Group_Member.status == "approved")
+    member = member_query.first()
+    if not member:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"You do not belong to group {group_id}")
+    group = db.query(models.Group).filter(models.Group.group_id == group_id).first()
+    return group
+
 @router.post("/", response_model=schemas.GroupResponse)
 def create_group(group: schemas.GroupCreate, db: Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
     # Tạo nhóm mới
